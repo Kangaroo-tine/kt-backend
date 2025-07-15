@@ -3,6 +3,8 @@ package Kangcrew.kangaroo_tine.global.security.application;
 import Kangcrew.kangaroo_tine.domain.user.domain.UserRole;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.User;
 import Kangcrew.kangaroo_tine.domain.user.domain.repository.UserRepository;
+import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
+import Kangcrew.kangaroo_tine.global.exception.GeneralException;
 import Kangcrew.kangaroo_tine.global.security.authenticationToken.KangarootineAuthenticationToken;
 import Kangcrew.kangaroo_tine.global.security.dto.response.AuthResponseDTO;
 import Kangcrew.kangaroo_tine.global.security.dto.response.KakaoUserInfoDTO;
@@ -23,43 +25,59 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDTO login(String kakaoAccessToken) {
-        System.out.println(">> kakaoAccessToken = " + kakaoAccessToken);
-        // 1. Bearer 제거
+
         if (kakaoAccessToken.startsWith("Bearer ")) {
             kakaoAccessToken = kakaoAccessToken.substring(7);
         }
 
-        // 2. 카카오 사용자 정보 요청
         KakaoUserInfoDTO kakaoUser = kakaoApiClient.getUserInfo(kakaoAccessToken);
         Long kakaoId = kakaoUser.getId();
 
-        // 3. DB에서 사용자 조회 (없으면 생성)
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseGet(() -> {
-                    User newUser = new User(null, kakaoId, null); // 여기서 다시 valueOf 하지 않음
+                    User newUser = new User(null, kakaoId, null);
                     return userRepository.save(newUser);
                 });
 
-        // 4. Authentication 생성
         KangarootineAuthenticationToken token =
                 new KangarootineAuthenticationToken(user.getKakaoId().toString(), null);
 
         Authentication authentication = authenticationManager.authenticate(token);
 
-        // 5. JWT 생성
         String accessToken = tokenManager.writeToken(authentication);
+        String refreshToken = tokenManager.writeRefreshToken(authentication);
 
         return new AuthResponseDTO(
                 accessToken,
-                null,
+                refreshToken,
                 "86400000",
-                null
+                "604800000"
         );
     }
 
 
     @Override
     public AuthResponseDTO refresh(String refreshToken) {
-        return null;
+
+        if (refreshToken.startsWith("Bearer ")) {
+            refreshToken = refreshToken.substring(7);
+        }
+
+        if (!tokenManager.isValidToken(refreshToken)) {
+            throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);
+        }
+
+        Authentication authentication = tokenManager.getAuthentication(refreshToken);
+
+        String newAccessToken = tokenManager.writeToken(authentication);
+        String newRefreshToken = tokenManager.writeRefreshToken(authentication);
+
+        return new AuthResponseDTO(
+                newAccessToken,
+                newRefreshToken,
+                "86400000",
+                "604800000"
+        );
     }
+
 }

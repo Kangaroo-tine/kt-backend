@@ -9,6 +9,6 @@ public enum KangarootineAuthority implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return name(); // → "ROLE_SUBJECT", "ROLE_GUARDIAN"
+        return name(); // "SUBJECT", "GUARDIAN"
     }
 }

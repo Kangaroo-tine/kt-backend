@@ -18,7 +18,7 @@ public class KangarootineUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (user.getRole() == null) {
-            return List.of(); // 또는 기본 권한 GUEST 줘도 됨
+            return List.of();
         }
         return Collections.singleton(() -> user.getRole().name());
     }

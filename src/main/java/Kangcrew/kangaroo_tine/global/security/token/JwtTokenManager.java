@@ -49,6 +49,16 @@ public class JwtTokenManager implements TokenManager{
     }
 
     @Override
+    public String writeRefreshToken(Authentication authentication) {
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() +7 * 24 * 60 * 60 * 1000L))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    @Override
     public KangarootineAuthenticationToken readToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -68,5 +78,31 @@ public class JwtTokenManager implements TokenManager{
         return new KangarootineAuthenticationToken(
                 loginId, null, authorities, id
         );
+    }
+
+    @Override
+    public boolean isValidToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String kakaoId = claims.getSubject();
+
+        return new KangarootineAuthenticationToken(kakaoId, null);
     }
 }

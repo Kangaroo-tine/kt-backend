@@ -17,7 +17,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "카카오 로그인", description = "AccessToken으로 로그인 처리")
+    @Operation(summary = "카카오 로그인 API", description = "AccessToken으로 로그인 처리")
     @PostMapping("/login")
     public BaseResponse<AuthResponseDTO> login(
             @RequestHeader("Authorization") String kakaoAccessToken
@@ -26,8 +26,11 @@ public class AuthController {
         return BaseResponse.onSuccess(SuccessStatus.LOGIN_SUCCESS, response);
     }
 
+    @Operation(summary = "token 재발급 API", description = "RefreshToken으로 AccessToken 재발급")
     @PostMapping("/refresh")
-    public BaseResponse<AuthResponseDTO> refresh(@RequestParam String refreshToken) {
+    public BaseResponse<AuthResponseDTO> refresh(
+            @RequestHeader("Authorization") String refreshToken
+    ) {
         AuthResponseDTO response = authService.refresh(refreshToken);
         return BaseResponse.onSuccess(SuccessStatus.REFRESH_SUCCESS, response);
     }
