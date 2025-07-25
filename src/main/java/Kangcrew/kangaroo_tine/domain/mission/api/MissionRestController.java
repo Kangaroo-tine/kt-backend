@@ -2,11 +2,11 @@ package Kangcrew.kangaroo_tine.domain.mission.api;
 
 import Kangcrew.kangaroo_tine.domain.mission.application.MissionService;
 import Kangcrew.kangaroo_tine.domain.mission.dto.MissionRequestDTO;
+import Kangcrew.kangaroo_tine.domain.mission.dto.MissionResponse;
 import Kangcrew.kangaroo_tine.domain.mission.dto.MissionTodayResponseDTO;
-import Kangcrew.kangaroo_tine.domain.mission.exception.MissionException;
 import Kangcrew.kangaroo_tine.domain.mission.exception.MissionNotFoundException;
-import Kangcrew.kangaroo_tine.domain.mission.exception.SubjectNotFoundException;
 import Kangcrew.kangaroo_tine.global.config.response.BaseResponse;
+import Kangcrew.kangaroo_tine.global.config.response.MissionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +27,8 @@ public class MissionRestController {
     //오늘 미션 현황 조회
     @GetMapping("/{subjectId}/mission/status")
     public ResponseEntity<?> getTodayMissionStatus(@PathVariable Long subjectId) {
-        try {
-            MissionRequestDTO response = missionService.getTodayMissionStatus(subjectId);
-            return ResponseEntity.ok(new BaseResponse<>(true, "MISSION_200", "오늘 미션 현황 조회 성공", response));
-        } catch (SubjectNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BaseResponse<>(false, "SUBJECT_404", "존재하지 않는 대상자입니다.",null));
-        } catch (MissionNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BaseResponse<>(false, "MISSION_404", "해당 대상자의 오늘 미션 정보가 존재하지 않습니다.",null));
-        }
+        MissionRequestDTO response = missionService.getTodayMissionStatus(subjectId);
+        return ResponseEntity.ok(new BaseResponse<>(true,"Mission_200","오늘 미션 현황 조회 성공", response));
     }
 
     //오늘 미션 목록 조회
@@ -53,5 +45,13 @@ public class MissionRestController {
         return ResponseEntity.ok(
                 new BaseResponse<>(true, "MISSION_200", "오늘 미션 목록 조회 성공", missions)
         );
+    }
+
+    //현재 시간 기준 수행해야할 미션 조회
+    @GetMapping("/{subjectId}/missions/current")
+    public ResponseEntity<BaseResponse<MissionResponse.CurrentMissionDto>> getCurrentMission(
+            @PathVariable Long subjectId) {
+        MissionResponse.CurrentMissionDto result = missionService.getCurrentMissionBySubjectId(subjectId);
+        return ResponseEntity.ok(new BaseResponse<>(true, MissionCode.MISSION_200.getCode(), MissionCode.MISSION_200.getMessage(), result));
     }
 }

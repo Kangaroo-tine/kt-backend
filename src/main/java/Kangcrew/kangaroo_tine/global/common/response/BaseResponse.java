@@ -2,6 +2,7 @@ package Kangcrew.kangaroo_tine.global.common.response;
 
 import Kangcrew.kangaroo_tine.global.error.code.BaseCode;
 import Kangcrew.kangaroo_tine.global.error.code.BaseErrorCode;
+import Kangcrew.kangaroo_tine.global.error.code.ReasonDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,5 +35,14 @@ public class BaseResponse<T> {
                 code.getCode(),
                 code.getMessage(),
                 result);
+    }
+
+    public static <T> BaseResponse<T> fromReasonDTO(ReasonDTO reason, T result) {
+        return new BaseResponse<>(
+                reason.isSuccess(),
+                reason.getCode(),
+                reason.getMessage(),
+                result
+        );
     }
 }

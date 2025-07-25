@@ -1,3 +1,22 @@
 spring:
-  profiles:
-    default: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/kangaroo
+    username: root
+    password: 'qotjdbs1@'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # create, update, validate, none ? ??
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always  # ?? schema.sql ?? data.sql ?? ?? ??
+
+jwt:
+  secret: kangarooTineSecretKey_ChangeThisToBeLongEnough123!

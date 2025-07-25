@@ -27,6 +27,9 @@ public class JwtTokenManager implements TokenManager{
 
     @PostConstruct
     public void initKey() {
+        if(jwtSecret == null || jwtSecret.isEmpty()){
+            throw new IllegalArgumentException("JWT secret is missing");
+        }
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -105,4 +108,5 @@ public class JwtTokenManager implements TokenManager{
 
         return new KangarootineAuthenticationToken(kakaoId, null);
     }
+
 }

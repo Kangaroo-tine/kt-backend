@@ -1,6 +1,8 @@
 package Kangcrew.kangaroo_tine.global.exception;
 
+import Kangcrew.kangaroo_tine.domain.mission.exception.MissionNotFoundException;
 import Kangcrew.kangaroo_tine.global.common.response.BaseResponse;
+import Kangcrew.kangaroo_tine.global.error.code.ReasonDTO;
 import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -81,5 +83,18 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(ErrorStatus._INTERNAL_SERVER_ERROR.getHttpStatus())
                 .body(body);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<BaseResponse<Object>> handleCustomException(CustomException e) {
+        ReasonDTO reason = e.getErrorCode().getReasonHttpStatus();
+        BaseResponse<Object> response = BaseResponse.fromReasonDTO(reason, null);
+        return ResponseEntity.status(reason.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(MissionNotFoundException.class)
+    public ResponseEntity<BaseResponse<Object>> handleMissionNotFoundException(MissionNotFoundException e) {
+        BaseResponse<Object> response = new BaseResponse<>(false, "MISSION_404", "해당 대상자의 오늘 미션 정보가 존재하지 않습니다.", null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
