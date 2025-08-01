@@ -30,6 +30,9 @@ public class Guardian extends BaseEntity {
     @Column(length = 30)
     private String email;
 
+    @Column(length = 20, nullable = false)
+    private String subjectName;
+
     private String profileImg;
 
     private LocalDate birth;

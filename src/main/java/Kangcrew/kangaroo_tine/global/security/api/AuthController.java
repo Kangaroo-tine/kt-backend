@@ -3,6 +3,7 @@ package Kangcrew.kangaroo_tine.global.security.api;
 import Kangcrew.kangaroo_tine.global.common.response.BaseResponse;
 import Kangcrew.kangaroo_tine.global.error.code.status.SuccessStatus;
 import Kangcrew.kangaroo_tine.global.security.application.AuthService;
+import Kangcrew.kangaroo_tine.global.security.dto.request.AuthRequestDTO;
 import Kangcrew.kangaroo_tine.global.security.dto.response.AuthResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,21 +18,22 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "카카오 로그인 API", description = "AccessToken으로 로그인 처리")
+    @Operation(summary = "카카오 로그인 API", description = "Kakao AccessToken을 body로 전달")
     @PostMapping("/login")
     public BaseResponse<AuthResponseDTO> login(
-            @RequestHeader("Authorization") String kakaoAccessToken
+            @RequestBody AuthRequestDTO request
     ) {
-        AuthResponseDTO response = authService.login(kakaoAccessToken);
+        AuthResponseDTO response = authService.login(request.getToken());
         return BaseResponse.onSuccess(SuccessStatus.LOGIN_SUCCESS, response);
     }
 
-    @Operation(summary = "token 재발급 API", description = "RefreshToken으로 AccessToken 재발급")
+    @Operation(summary = "Token 재발급 API", description = "RefreshToken을 body로 전달")
     @PostMapping("/refresh")
     public BaseResponse<AuthResponseDTO> refresh(
-            @RequestHeader("Authorization") String refreshToken
+            @RequestBody AuthRequestDTO request
     ) {
-        AuthResponseDTO response = authService.refresh(refreshToken);
+        AuthResponseDTO response = authService.refresh(request.getToken());
         return BaseResponse.onSuccess(SuccessStatus.REFRESH_SUCCESS, response);
     }
 }
+

@@ -1,7 +1,12 @@
 package Kangcrew.kangaroo_tine.global.security.token;
 
+import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.User;
+import Kangcrew.kangaroo_tine.domain.user.domain.repository.UserRepository;
+import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
+import Kangcrew.kangaroo_tine.global.exception.GeneralException;
 import Kangcrew.kangaroo_tine.global.security.authenticationToken.KangarootineAuthenticationToken;
 import Kangcrew.kangaroo_tine.global.security.userDetail.KangarootineAuthority;
+import Kangcrew.kangaroo_tine.global.security.userDetail.KangarootineUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
@@ -29,6 +34,8 @@ public class JwtTokenManager implements TokenManager{
     public void initKey() {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
+
+    private final UserRepository userRepository;
 
     @Override
     public String writeToken(Authentication authentication) {
@@ -66,17 +73,18 @@ public class JwtTokenManager implements TokenManager{
                 .parseClaimsJws(token)
                 .getBody();
 
-        String loginId = claims.get("loginId", String.class);
         Long id = claims.get("id", Long.class);
-        List<String> roles = claims.get("authorities", List.class);
 
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(KangarootineAuthority.valueOf(role));
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        KangarootineUserDetails userDetails = new KangarootineUserDetails(user);
 
         return new KangarootineAuthenticationToken(
-                loginId, null, authorities, id
+                userDetails,
+                null,
+                userDetails.getAuthorities(),
+                user.getId()
         );
     }
 

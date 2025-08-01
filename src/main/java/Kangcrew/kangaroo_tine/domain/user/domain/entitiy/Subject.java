@@ -29,9 +29,6 @@ public class Subject extends BaseEntity {
     @Column(length = 7, nullable = false)
     private String connectCode;
 
-    @Column(length = 20, nullable = false)
-    private String guardianName;
-
     @Column(length = 15, nullable = false)
     private String phone;
 

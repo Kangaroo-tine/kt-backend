@@ -19,4 +19,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private UserRole role;
+
+    public void assignRole(UserRole role) {
+        this.role = role;
+    }
 }
