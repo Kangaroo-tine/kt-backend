@@ -1,11 +1,15 @@
 package Kangcrew.kangaroo_tine.domain.user.application;
 
+import Kangcrew.kangaroo_tine.domain.user.converter.UserConverter;
+import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.Guardian;
+import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.Subject;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.User;
+import Kangcrew.kangaroo_tine.domain.user.domain.repository.GuardianRepository;
+import Kangcrew.kangaroo_tine.domain.user.domain.repository.SubjectRepository;
 import Kangcrew.kangaroo_tine.domain.user.domain.repository.UserRepository;
 import Kangcrew.kangaroo_tine.domain.user.dto.request.UserRequestDTO;
 import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
 import Kangcrew.kangaroo_tine.global.exception.GeneralException;
-import Kangcrew.kangaroo_tine.global.security.application.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final GuardianRepository guardianRepository;
+    private final SubjectRepository subjectRepository;
 
     @Override
     @Transactional
@@ -24,5 +30,33 @@ public class UserServiceImpl implements UserService {
 
         user.assignRole(request.getRole());
         userRepository.save(user);
+
+        switch (request.getRole()) {
+            case GUARDIAN -> {
+                Guardian guardian = UserConverter.toGuardianFromUser(user);
+                guardianRepository.save(guardian);
+            }
+            case SUBJECT -> {
+                Subject subject = UserConverter.toSubjectFromUser(user);
+                subjectRepository.save(subject);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveGuardianPhone(Long userId, UserRequestDTO.SaveGuardianPhoneDTO request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Subject subject = subjectRepository.findByUser(user)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUBJECT_NOT_FOUND));
+
+        if (subject.getGuardian() != null) {
+            throw new GeneralException(ErrorStatus.SUBJECT_ALREADY_CONNECTED);
+        }
+
+        subject.updateGuardianPhone(request.getPhone());
+
     }
 }

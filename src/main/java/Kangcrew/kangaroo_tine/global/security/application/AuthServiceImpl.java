@@ -32,12 +32,26 @@ public class AuthServiceImpl implements AuthService {
 
         KakaoUserInfoDTO kakaoUser = kakaoApiClient.getUserInfo(kakaoAccessToken);
         Long kakaoId = kakaoUser.getId();
+        String nickname = kakaoUser.getNickname();
+        String email = kakaoUser.getEmail();
+        String profileImageUrl = kakaoUser.getProfileImageUrl();
 
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseGet(() -> {
-                    User newUser = new User(null, kakaoId, null);
+                    User newUser = User.builder()
+                            .kakaoId(kakaoId)
+                            .name(nickname)
+                            .email(email)
+                            .profileImg(profileImageUrl)
+                            .role(null)
+                            .build();
                     return userRepository.save(newUser);
                 });
+
+        if (user.getName() == null || user.getProfileImg() == null) {
+            user.updateProfile(nickname, email, profileImageUrl);
+            userRepository.save(user);
+        }
 
         KangarootineAuthenticationToken token =
                 new KangarootineAuthenticationToken(user.getKakaoId().toString(), null);

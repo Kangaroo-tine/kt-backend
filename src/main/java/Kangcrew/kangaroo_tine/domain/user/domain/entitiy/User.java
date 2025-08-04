@@ -20,6 +20,18 @@ public class User {
     @Column(nullable = true)
     private UserRole role;
 
+    private String name;
+
+    private String email;
+
+    private String profileImg;
+
+    public void updateProfile(String name, String email, String profileImg) {
+        this.name = name;
+        this.email = email;
+        this.profileImg = profileImg;
+    }
+
     public void assignRole(UserRole role) {
         this.role = role;
     }

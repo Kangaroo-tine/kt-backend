@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,5 +29,16 @@ public class UserContorller {
         Long userId = userDetails.getDatabaseId();
         userService.setUserRole(userId, request);
         return BaseResponse.onSuccess(SuccessStatus.USER_ROLE_UPDATED, null);
+    }
+
+    @PostMapping("/guardian-phone")
+    @Operation(summary = "보호자 전화번호 저장", description = "대상자가 보호자 전화번호를 저장합니다.")
+    public BaseResponse<Void> saveGuardianPhone(
+            @RequestBody @Valid UserRequestDTO.SaveGuardianPhoneDTO request,
+            @AuthenticationPrincipal KangarootineUserDetails userDetails) {
+
+        Long userId = userDetails.getDatabaseId();
+        userService.saveGuardianPhone(userId, request);
+        return BaseResponse.onSuccess(SuccessStatus.GUARDIAN_PHONE_SAVED, null);
     }
 }

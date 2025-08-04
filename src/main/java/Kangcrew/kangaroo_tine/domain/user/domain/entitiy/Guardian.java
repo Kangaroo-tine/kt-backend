@@ -21,19 +21,11 @@ public class Guardian extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 15)
     private String phone;
 
-    @Column(length = 20, nullable = false)
-    private String name;
-
-    @Column(length = 30)
-    private String email;
-
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String subjectName;
-
-    private String profileImg;
 
     private LocalDate birth;
 

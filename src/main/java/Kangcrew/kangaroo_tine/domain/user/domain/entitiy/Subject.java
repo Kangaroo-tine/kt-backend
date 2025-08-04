@@ -23,22 +23,17 @@ public class Subject extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guardian_id", nullable = false)
+    @JoinColumn(name = "guardian_id")
     private Guardian guardian;
 
-    @Column(length = 7, nullable = false)
+    @Column(length = 7)
     private String connectCode;
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 15)
     private String phone;
 
-    @Column(length = 20, nullable = false)
-    private String name;
-
-    @Column(length = 30)
-    private String email;
-
-    private String profileImg;
+    @Column(length = 15)
+    private String guardianPhone;
 
     private LocalDate birth;
 
@@ -48,4 +43,8 @@ public class Subject extends BaseEntity {
     private SubjectStatus status;
 
     private Boolean isDeleted;
+
+    public void updateGuardianPhone(String guardianPhone) {
+        this.guardianPhone = guardianPhone;
+    }
 }

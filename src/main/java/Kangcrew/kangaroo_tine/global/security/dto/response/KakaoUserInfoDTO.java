@@ -12,10 +12,33 @@ public class KakaoUserInfoDTO {
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
+    @Getter
     public static class KakaoAccount {
         private Profile profile;
+        private String email;
+
+        @Getter
         public static class Profile {
             private String nickname;
+
+            @JsonProperty("profile_image_url")
+            private String profileImageUrl;
         }
+    }
+
+    public String getNickname() {
+        return kakaoAccount != null && kakaoAccount.getProfile() != null
+                ? kakaoAccount.getProfile().getNickname()
+                : null;
+    }
+
+    public String getProfileImageUrl() {
+        return kakaoAccount != null && kakaoAccount.getProfile() != null
+                ? kakaoAccount.getProfile().getProfileImageUrl()
+                : null;
+    }
+
+    public String getEmail() {
+        return kakaoAccount != null ? kakaoAccount.getEmail() : null;
     }
 }

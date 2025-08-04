@@ -17,4 +17,12 @@ public class UserRequestDTO {
         @NotNull(message = "역할은 필수입니다.")
         private UserRole role;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveGuardianPhoneDTO {
+        private String phone;
+    }
 }
