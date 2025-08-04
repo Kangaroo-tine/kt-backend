@@ -5,7 +5,7 @@ import Kangcrew.kangaroo_tine.domain.user.domain.SubjectStatus;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.Guardian;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.Subject;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.User;
-import Kangcrew.kangaroo_tine.domain.user.dto.request.UserRequestDTO;
+import Kangcrew.kangaroo_tine.domain.user.dto.response.UserResponseDTO;
 
 public class UserConverter {
 
@@ -27,5 +27,9 @@ public class UserConverter {
                 .status(SubjectStatus.ACTIVE)
                 .isDeleted(false)
                 .build();
+    }
+
+    public static UserResponseDTO.ConnectCodeDTO toConnectCodeDTO(String code) {
+        return new UserResponseDTO.ConnectCodeDTO(code);
     }
 }

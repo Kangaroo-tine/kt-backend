@@ -8,9 +8,11 @@ import Kangcrew.kangaroo_tine.domain.user.domain.repository.GuardianRepository;
 import Kangcrew.kangaroo_tine.domain.user.domain.repository.SubjectRepository;
 import Kangcrew.kangaroo_tine.domain.user.domain.repository.UserRepository;
 import Kangcrew.kangaroo_tine.domain.user.dto.request.UserRequestDTO;
+import Kangcrew.kangaroo_tine.domain.user.dto.response.UserResponseDTO;
 import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
 import Kangcrew.kangaroo_tine.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,5 +60,22 @@ public class UserServiceImpl implements UserService {
 
         subject.updateGuardianPhone(request.getPhone());
 
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDTO.ConnectCodeDTO generateConnectCode(Long userId) {
+        Subject subject = subjectRepository.findByUserId(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.SUBJECT_NOT_FOUND));
+
+        String newCode = generateRandomCode();
+        subject.updateConnectCode(newCode);
+        subjectRepository.save(subject);
+
+        return UserConverter.toConnectCodeDTO(newCode);
+    }
+
+    private String generateRandomCode() {
+        return RandomStringUtils.randomAlphanumeric(6).toUpperCase();
     }
 }

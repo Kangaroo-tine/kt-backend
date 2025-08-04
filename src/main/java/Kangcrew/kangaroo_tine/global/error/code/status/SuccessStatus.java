@@ -18,7 +18,8 @@ public enum SuccessStatus implements BaseCode {
 
     //User
     USER_ROLE_UPDATED(HttpStatus.OK, "USER_2001", "유저 역할이 설정되었습니다."),
-    GUARDIAN_PHONE_SAVED(HttpStatus.OK,"USER_2002", "보호자 전화번호가 저장되었습니다.");
+    GUARDIAN_PHONE_SAVED(HttpStatus.OK,"USER_2002", "보호자 전화번호가 저장되었습니다."),
+    CONNECT_CODE_CREATED(HttpStatus.OK, "USER_2003", "연결 코드가 생성되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

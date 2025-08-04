@@ -47,4 +47,8 @@ public class Subject extends BaseEntity {
     public void updateGuardianPhone(String guardianPhone) {
         this.guardianPhone = guardianPhone;
     }
+
+    public void updateConnectCode(String newCode) {
+        this.connectCode = newCode;
+    }
 }

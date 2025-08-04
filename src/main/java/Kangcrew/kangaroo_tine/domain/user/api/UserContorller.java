@@ -2,6 +2,7 @@ package Kangcrew.kangaroo_tine.domain.user.api;
 
 import Kangcrew.kangaroo_tine.domain.user.application.UserService;
 import Kangcrew.kangaroo_tine.domain.user.dto.request.UserRequestDTO;
+import Kangcrew.kangaroo_tine.domain.user.dto.response.UserResponseDTO;
 import Kangcrew.kangaroo_tine.global.common.response.BaseResponse;
 import Kangcrew.kangaroo_tine.global.error.code.status.SuccessStatus;
 import Kangcrew.kangaroo_tine.global.security.userDetail.KangarootineUserDetails;
@@ -41,4 +42,16 @@ public class UserContorller {
         userService.saveGuardianPhone(userId, request);
         return BaseResponse.onSuccess(SuccessStatus.GUARDIAN_PHONE_SAVED, null);
     }
+
+    @PostMapping("/connect-code")
+    @Operation(summary = "연결코드 생성", description = "대상자의 연결코드를 새로 생성합니다.")
+    public BaseResponse<UserResponseDTO.ConnectCodeDTO> createConnectCode(
+            @AuthenticationPrincipal KangarootineUserDetails userDetails) {
+
+        Long userId = userDetails.getDatabaseId();
+        UserResponseDTO.ConnectCodeDTO connectCodeDTO = userService.generateConnectCode(userId);
+
+        return BaseResponse.onSuccess(SuccessStatus.CONNECT_CODE_CREATED, connectCodeDTO);
+    }
+
 }
