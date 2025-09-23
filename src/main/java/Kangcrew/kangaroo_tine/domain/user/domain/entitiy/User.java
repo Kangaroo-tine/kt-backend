@@ -1,6 +1,5 @@
 package Kangcrew.kangaroo_tine.domain.user.domain.entitiy;
 
-import Kangcrew.kangaroo_tine.domain.user.domain.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +15,6 @@ public class User {
 
     private Long kakaoId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private UserRole role;
-
     private String name;
 
     private String email;
@@ -30,9 +25,5 @@ public class User {
         this.name = name;
         this.email = email;
         this.profileImg = profileImg;
-    }
-
-    public void assignRole(UserRole role) {
-        this.role = role;
     }
 }

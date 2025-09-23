@@ -7,4 +7,5 @@ public interface UserService {
     void setUserRole(Long userId,UserRequestDTO.SetUserRoleDTO request);
     void saveGuardianPhone(Long userId, UserRequestDTO.SaveGuardianPhoneDTO request);
     UserResponseDTO.ConnectCodeDTO generateConnectCode(Long userId);
+    UserResponseDTO.SubjectRegisterResultDTO registerSubject(Long guardianUserId, UserRequestDTO.SubjectRegisterDTO request);
 }

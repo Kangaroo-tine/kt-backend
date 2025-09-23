@@ -1,6 +1,5 @@
 package Kangcrew.kangaroo_tine.global.security.application;
 
-import Kangcrew.kangaroo_tine.domain.user.domain.UserRole;
 import Kangcrew.kangaroo_tine.domain.user.domain.entitiy.User;
 import Kangcrew.kangaroo_tine.domain.user.domain.repository.UserRepository;
 import Kangcrew.kangaroo_tine.global.error.code.status.ErrorStatus;
@@ -43,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
                             .name(nickname)
                             .email(email)
                             .profileImg(profileImageUrl)
-                            .role(null)
                             .build();
                     return userRepository.save(newUser);
                 });
