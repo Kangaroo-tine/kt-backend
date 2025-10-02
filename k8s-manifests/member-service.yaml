@@ -1,0 +1,81 @@
+# Member Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: member-service
+  namespace: kangaroo-tine
+spec:
+  selector:
+    app: member-service
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: ClusterIP
+
+---
+# Member Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: member-service
+  namespace: kangaroo-tine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: member-service
+  template:
+    metadata:
+      labels:
+        app: member-service
+    spec:
+      containers:
+      - name: member-service
+        image: kangaroo-tine/member-service:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: secret
+        - name: KAKAO_REST_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: kakao-api-secret
+              key: rest-api-key
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: SPRING_PROFILES_ACTIVE
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10

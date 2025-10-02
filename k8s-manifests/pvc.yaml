@@ -1,0 +1,13 @@
+# MySQL 데이터 영구 저장을 위한 PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: kangaroo-tine
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: ncloud-csi-gp2  # 네이버 클라우드 플랫폼의 GP2 스토리지 클래스

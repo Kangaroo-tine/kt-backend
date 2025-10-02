@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/engagement-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/engagement-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kangarootine.iml" filepath="$PROJECT_DIR$/.idea/kangarootine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-service.main.iml" />
+    </modules>
+  </component>
+</project>

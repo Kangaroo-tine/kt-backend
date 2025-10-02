@@ -1,0 +1,85 @@
+# 로컬 개발 환경용 Docker Compose 설정
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: kangaroo-tine-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: kangaroo_tine
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./k8s-manifests/mysql-init-script.yaml:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - kangaroo-tine-network
+
+  member-service:
+    build: ./member-service
+    container_name: kangaroo-tine-member-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=ally050204!
+      - JWT_SECRET=local-dev-jwt-secret-key
+      - KAKAO_REST_API_KEY=79e73455589c19b1fc2f291bdeb4f9e8
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - mysql
+    networks:
+      - kangaroo-tine-network
+
+  planner-service:
+    build: ./planner-service
+    container_name: kangaroo-tine-planner-service
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=ally050204!
+      - JWT_SECRET=local-dev-jwt-secret-key
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - mysql
+    networks:
+      - kangaroo-tine-network
+
+  engagement-service:
+    build: ./engagement-service
+    container_name: kangaroo-tine-engagement-service
+    ports:
+      - "8083:8083"
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=ally050204!
+      - JWT_SECRET=local-dev-jwt-secret-key
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - mysql
+    networks:
+      - kangaroo-tine-network
+
+  api-gateway:
+    build: ./api-gw
+    container_name: kangaroo-tine-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - JWT_SECRET=local-dev-jwt-secret-key
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - member-service
+      - planner-service
+      - engagement-service
+    networks:
+      - kangaroo-tine-network
+
+volumes:
+  mysql_data:
+
+networks:
+  kangaroo-tine-network:
+    driver: bridge

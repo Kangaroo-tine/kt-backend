@@ -1,0 +1,76 @@
+# Planner Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: planner-service
+  namespace: kangaroo-tine
+spec:
+  selector:
+    app: planner-service
+  ports:
+    - port: 8082
+      targetPort: 8082
+  type: ClusterIP
+
+---
+# Planner Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: planner-service
+  namespace: kangaroo-tine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: planner-service
+  template:
+    metadata:
+      labels:
+        app: planner-service
+    spec:
+      containers:
+      - name: planner-service
+        image: kangaroo-tine/planner-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: secret
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: SPRING_PROFILES_ACTIVE
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10

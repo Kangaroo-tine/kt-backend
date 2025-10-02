@@ -1,0 +1,20 @@
+# MySQL 초기화 스크립트 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script
+  namespace: kangaroo-tine
+data:
+  init.sql: |
+    -- 각 서비스별 데이터베이스 생성
+    CREATE DATABASE IF NOT EXISTS member_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE DATABASE IF NOT EXISTS planner_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE DATABASE IF NOT EXISTS engagement_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    
+    -- kangarootine 사용자 생성 및 권한 부여
+    CREATE USER IF NOT EXISTS 'kangarootine'@'%' IDENTIFIED BY 'kangarootineserver';
+    GRANT ALL PRIVILEGES ON member_db.* TO 'kangarootine'@'%';
+    GRANT ALL PRIVILEGES ON planner_db.* TO 'kangarootine'@'%';
+    GRANT ALL PRIVILEGES ON engagement_db.* TO 'kangarootine'@'%';
+    
+    FLUSH PRIVILEGES;

@@ -1,0 +1,8 @@
+FROM eclipse-temurin:17-jre
+ENV TZ=Asia/Seoul
+WORKDIR /app
+
+COPY build/libs/engagement-service.jar /app/app.jar
+
+EXPOSE 8083
+ENTRYPOINT ["java","-jar","/app/app.jar"]
