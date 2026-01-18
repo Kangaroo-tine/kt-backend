@@ -8,14 +8,14 @@ KangarooTine은 MSA(Microservice Architecture) 기반의 백엔드 시스템으�
 ### 서비스 구성
 - **API Gateway** (`api-gw/`): 외부 요청의 진입점 (포트: 8080)
 - **Member Service** (`member-service/`): 사용자 인증 및 관리 (포트: 8081)
-- **Planner Service** (`planner-service/`): 일정 관리 서비스 (포트: 8082)
-- **Engagement Service** (`engagement-service/`): 참여 및 소통 서비스 (포트: 8083)
+- **Planner Service** (`planner-service/`): 목표 관리 서비스 (포트: 8082)
+- **Engagement Service** (`engagement-service/`): AI Kelper 및 일정 서비스 (포트: 8083)
 
 ### 데이터베이스 구성
 - **MySQL 8.0**: 단일 서버에서 논리적 스키마 분리
   - `member_db`: 사용자 관련 데이터
-  - `planner_db`: 일정 관련 데이터
-  - `engagement_db`: 참여 및 소통 관련 데이터
+  - `planner_db`: 목표 관련 데이터
+  - `engagement_db`: AI Kelper 및 일정 관련 데이터
 
 ## 기술 스택
 - **Backend**: Spring Boot 3.4.5, Java 17
@@ -112,18 +112,3 @@ kubectl logs -f deployment/<service-name> -n kangaroo-tine
 # Docker Compose 환경
 docker-compose logs -f <service-name>
 ```
-
-## 보안 고려사항
-- 시크릿 값은 절대 코드에 하드코딩하지 마세요
-- 운영 환경에서는 외부 시크릿 관리 도구 사용 권장
-- 네트워크 정책을 통한 서비스 간 통신 제한
-- SSL/TLS 인증서 설정
-
-## 기여 방법
-1. 이슈 생성 또는 기존 이슈 확인
-2. 기능 브랜치 생성
-3. 코드 작성 및 테스트
-4. Pull Request 생성
-
-## 라이선스
-이 프로젝트는 MIT 라이선스 하에 있습니다.

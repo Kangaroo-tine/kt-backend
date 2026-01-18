@@ -8,14 +8,14 @@
 ### 서비스 구성
 - **API Gateway** (포트: 8080): 외부 요청의 진입점
 - **Member Service** (포트: 8081): 사용자 인증 및 관리
-- **Planner Service** (포트: 8082): 일정 관리
-- **Engagement Service** (포트: 8083): 참여 및 소통
+- **Planner Service** (포트: 8082): 목표 관리
+- **Engagement Service** (포트: 8083): AI Kelper 및 일정 관리
 
 ### 데이터베이스 구성
 - **MySQL 8.0**: 단일 서버, 논리적 스키마 분리
   - `member_db`: 사용자 관련 데이터
-  - `planner_db`: 일정 관련 데이터
-  - `engagement_db`: 참여 및 소통 관련 데이터
+  - `planner_db`: 목표 관련 데이터
+  - `engagement_db`: AI Kelper 및 일정 관련 데이터
 
 ## 🚀 배포 단계
 
@@ -157,49 +157,9 @@ curl http://{EXTERNAL-IP}:8080/actuator/health
 
 ## 🔧 환경변수 설정
 
-### 필수 시크릿 값들
-- `DB_USERNAME`: kangarootine
-- `DB_PASSWORD`: kangarootineserver
-- `JWT_SECRET`: kangaroo-tine-production-jwt-secret-key-2025
-- `KAKAO_REST_API_KEY`: 79e73455589c19b1fc2f291bdeb4f9e8
-
 ### Base64 인코딩 방법
 ```bash
 echo -n "kangarootine" | base64
-echo -n "kangarootineserver" | base64
-echo -n "kangaroo-tine-production-jwt-secret-key-2025" | base64
-echo -n "79e73455589c19b1fc2f291bdeb4f9e8" | base64
-```
-
-## 🐛 문제 해결
-
-### 일반적인 문제들
-
-#### 1. Pod가 시작되지 않는 경우
-```bash
-# Pod 상태 확인
-kubectl describe pod <pod-name> -n kangaroo-tine
-
-# 이벤트 로그 확인
-kubectl get events -n kangaroo-tine --sort-by='.lastTimestamp'
-```
-
-#### 2. 데이터베이스 연결 실패
-```bash
-# MySQL 로그 확인
-kubectl logs -f deployment/mysql -n kangaroo-tine
-
-# 네트워크 정책 확인
-kubectl get networkpolicies -n kangaroo-tine
-```
-
-#### 3. 서비스 간 통신 문제
-```bash
-# 서비스 엔드포인트 확인
-kubectl get endpoints -n kangaroo-tine
-
-# DNS 확인
-kubectl run -it --rm debug --image=busybox --restart=Never -- nslookup member-service
 ```
 
 ## 📊 모니터링
@@ -228,29 +188,9 @@ kubectl logs -l app=api-gateway -n kangaroo-tine
    - **빌드 단계**: SourceBuild 연결
    - **배포 단계**: SourceDeploy 연결
 
-### 자동 배포 설정
-```yaml
-# .sourcepipeline.yml (예시)
-stages:
-  - name: build
-    type: sourcebuild
-    config:
-      projectId: "your-build-project-id"
-  - name: deploy
-    type: sourcedeploy
-    config:
-      clusterId: "your-cluster-id"
-      namespace: "kangaroo-tine"
-```
 
 ## 📝 추가 리소스
 
 - [네이버 클라우드 플랫폼 문서](https://guide.ncloud-docs.com/)
 - [Kubernetes 공식 문서](https://kubernetes.io/docs/)
 - [Spring Cloud Gateway 문서](https://spring.io/projects/spring-cloud-gateway)
-
-## 🆘 지원
-
-문제가 발생하거나 질문이 있으시면 다음을 통해 문의하세요:
-- 이슈 트래커: GitHub Issues
-- 이메일: support@kangarootine.com
